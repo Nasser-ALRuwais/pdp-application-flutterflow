@@ -305,7 +305,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                           onPressed: () async {
                             if (currentUserEmailVerified) {
                               context.pushNamedAuth(
-                                  'ComingSoonPage', context.mounted);
+                                  'HomePage', context.mounted);
 
                               return;
                             } else {
@@ -343,6 +343,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                     );
                                   },
                                 );
+                                await authManager.sendEmailVerification();
                                 return;
                               }
                             }
@@ -421,6 +422,130 @@ class _LoginWidgetState extends State<LoginWidget> {
                                       color: Color(0xFFFCA340),
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.w300,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: AlignmentDirectional(0.00, 0.00),
+                    child: Padding(
+                      padding:
+                          EdgeInsetsDirectional.fromSTEB(0.0, 5.0, 0.0, 0.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Align(
+                            alignment: AlignmentDirectional(0.00, 0.00),
+                            child: InkWell(
+                              splashColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: () async {
+                                if (/* NOT RECOMMENDED */ _model
+                                        .emailTextController.text ==
+                                    'true') {
+                                  if (_model.emailTextController.text.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Email required!',
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  await authManager.resetPassword(
+                                    email: _model.emailTextController.text,
+                                    context: context,
+                                  );
+                                  await showDialog(
+                                    context: context,
+                                    builder: (alertDialogContext) {
+                                      return AlertDialog(
+                                        title: Text('Email Sent'),
+                                        content: Text(
+                                            'Please check your email to reset you password. check you junk email if you cant\'t find it'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(
+                                                alertDialogContext),
+                                            child: Text('Ok'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                  return;
+                                } else {
+                                  await showDialog(
+                                    context: context,
+                                    builder: (alertDialogContext) {
+                                      return AlertDialog(
+                                        title: Text('Missing Value'),
+                                        content: Text('Please enter Email'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(
+                                                alertDialogContext),
+                                            child: Text('Ok'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                  if (_model.emailTextController.text.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Email required!',
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  await authManager.resetPassword(
+                                    email: _model.emailTextController.text,
+                                    context: context,
+                                  );
+                                  await showDialog(
+                                    context: context,
+                                    builder: (alertDialogContext) {
+                                      return AlertDialog(
+                                        title:
+                                            Text('Password Reset Email Sent'),
+                                        content: Text(
+                                            'Please check your email to reset you password. check you junk email if you cant\'t find it'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(
+                                                alertDialogContext),
+                                            child: Text('Ok'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                  return;
+                                }
+                              },
+                              child: Text(
+                                'Forgot Password?',
+                                style: FlutterFlowTheme.of(context)
+                                    .headlineMedium
+                                    .override(
+                                      fontFamily: 'Spline Sans',
+                                      color:
+                                          FlutterFlowTheme.of(context).tertiary,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w300,
+                                      fontStyle: FontStyle.italic,
                                     ),
                               ),
                             ),

@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CLIENT_ID</key>
-	<string>855529549172-kgit86frovk6uj604j33f79pk0dqq80q.apps.googleusercontent.com</string>
-	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.855529549172-kgit86frovk6uj604j33f79pk0dqq80q</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>855529549172-trhet8nblgkapfemstit5537nj1immqs.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +11,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.mycompany.pdpconference</string>
+	<string>com.PDPCommittee.pdpconference</string>
 	<key>PROJECT_ID</key>
 	<string>pdp-conference-2023</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +27,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:855529549172:ios:421ea4b54676d4d82b1021</string>
+	<string>1:855529549172:ios:038f0c2c598c65142b1021</string>
 </dict>
 </plist>
