@@ -107,7 +107,13 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           path: '/homePage',
           builder: (context, params) => params.isEmpty
               ? NavBarPage(initialPage: 'HomePage')
-              : HomePageWidget(),
+              : NavBarPage(
+                  initialPage: 'HomePage',
+                  page: HomePageWidget(
+                    conferenceDate:
+                        params.getParam('conferenceDate', ParamType.DateTime),
+                  ),
+                ),
         ),
         FFRoute(
           name: 'Login',
@@ -124,12 +130,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: 'GamePage',
           path: '/gamePage',
-          builder: (context, params) => params.isEmpty
-              ? NavBarPage(initialPage: 'GamePage')
-              : NavBarPage(
-                  initialPage: 'GamePage',
-                  page: GamePageWidget(),
-                ),
+          builder: (context, params) => GamePageWidget(),
         ),
         FFRoute(
           name: 'profile',

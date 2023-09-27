@@ -50,62 +50,61 @@ class _ComingSoonPageWidgetState extends State<ComingSoonPageWidget> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(_model.unfocusNode),
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: Color(0xFF351A33),
-        body: SafeArea(
-          top: true,
-          child: Align(
-            alignment: AlignmentDirectional(0.00, 0.00),
-            child: Container(
-              width: double.infinity,
-              height: double.infinity,
-              constraints: BoxConstraints(
-                minWidth: double.infinity,
-                minHeight: double.infinity,
-                maxWidth: double.infinity,
-                maxHeight: double.infinity,
-              ),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFF351A33),
-                    FlutterFlowTheme.of(context).secondary
-                  ],
-                  stops: [0.0, 1.0],
-                  begin: AlignmentDirectional(0.0, -1.0),
-                  end: AlignmentDirectional(0, 1.0),
-                ),
-                shape: BoxShape.rectangle,
-              ),
-              alignment: AlignmentDirectional(0.00, 0.00),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: Image.asset(
-                      'assets/images/PDP_Conference_Brand_Image_(1)new.png',
-                      width: 187.0,
-                      height: 159.0,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Text(
-                    'Coming Soon!!\nNovmber 27th',
-                    textAlign: TextAlign.center,
-                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Spline Sans',
-                          color: FlutterFlowTheme.of(context).tertiary,
-                          fontSize: 25.0,
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
+        body: Align(
+          alignment: AlignmentDirectional(0.00, 0.00),
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            constraints: BoxConstraints(
+              minWidth: double.infinity,
+              minHeight: double.infinity,
+              maxWidth: double.infinity,
+              maxHeight: double.infinity,
+            ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFF351A33),
+                  FlutterFlowTheme.of(context).secondary
                 ],
+                stops: [0.0, 1.0],
+                begin: AlignmentDirectional(0.0, -1.0),
+                end: AlignmentDirectional(0, 1.0),
               ),
+              shape: BoxShape.rectangle,
+            ),
+            alignment: AlignmentDirectional(0.00, 0.00),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Image.asset(
+                    'assets/images/PDP_Conference_Brand_Image_(1)new.png',
+                    width: 187.0,
+                    height: 159.0,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Text(
+                  'Coming Soon!!\nNovmber 27th',
+                  textAlign: TextAlign.center,
+                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                        fontFamily: 'Spline Sans',
+                        color: FlutterFlowTheme.of(context).tertiary,
+                        fontSize: 25.0,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+              ],
             ),
           ),
         ),

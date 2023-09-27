@@ -1,3 +1,4 @@
+import 'package:provider/provider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +23,13 @@ void main() async {
   usePathUrlStrategy();
   await initFirebase();
 
-  runApp(MyApp());
+  final appState = FFAppState(); // Initialize FFAppState
+  await appState.initializePersistedState();
+
+  runApp(ChangeNotifierProvider(
+    create: (context) => appState,
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -124,7 +131,6 @@ class _NavBarPageState extends State<NavBarPage> {
     final tabs = {
       'HomePage': HomePageWidget(),
       'TimelinePage': TimelinePageWidget(),
-      'GamePage': GamePageWidget(),
     };
     final currentIndex = tabs.keys.toList().indexOf(_currentPageName);
 
@@ -137,15 +143,15 @@ class _NavBarPageState extends State<NavBarPage> {
           _currentPageName = tabs.keys.toList()[i];
         }),
         backgroundColor: Color(0xFF74279E),
-        selectedItemColor: FlutterFlowTheme.of(context).tertiary,
-        unselectedItemColor: FlutterFlowTheme.of(context).tertiary,
+        selectedItemColor: Color(0xFFEAECF0),
+        unselectedItemColor: FlutterFlowTheme.of(context).secondaryText,
         showSelectedLabels: true,
-        showUnselectedLabels: true,
+        showUnselectedLabels: false,
         type: BottomNavigationBarType.fixed,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home_outlined,
+            icon: FaIcon(
+              FontAwesomeIcons.home,
               size: 24.0,
             ),
             label: 'Home',
@@ -153,18 +159,10 @@ class _NavBarPageState extends State<NavBarPage> {
           ),
           BottomNavigationBarItem(
             icon: FaIcon(
-              FontAwesomeIcons.comments,
+              FontAwesomeIcons.solidComments,
               size: 24.0,
             ),
-            label: 'Timeline',
-            tooltip: '',
-          ),
-          BottomNavigationBarItem(
-            icon: FaIcon(
-              FontAwesomeIcons.gamepad,
-              size: 24.0,
-            ),
-            label: 'game',
+            label: 'Social',
             tooltip: '',
           )
         ],

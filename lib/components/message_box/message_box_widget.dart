@@ -1,8 +1,10 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/backend/firebase_storage/storage.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/upload_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -44,6 +46,8 @@ class _MessageBoxWidgetState extends State<MessageBoxWidget> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
     return Container(
       width: double.infinity,
       height: 60.0,
@@ -64,23 +68,124 @@ class _MessageBoxWidgetState extends State<MessageBoxWidget> {
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 0.0),
-            child: FlutterFlowIconButton(
-              borderColor: Colors.transparent,
-              borderRadius: 8.0,
-              borderWidth: 1.0,
-              buttonSize: 44.0,
-              icon: Icon(
-                Icons.image_outlined,
-                color: FlutterFlowTheme.of(context).tertiary,
-                size: 24.0,
+          if (_model.uploadedFileUrl != null && _model.uploadedFileUrl != '')
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+              child: FlutterFlowIconButton(
+                borderColor: Colors.transparent,
+                borderRadius: 8.0,
+                borderWidth: 1.0,
+                buttonSize: 39.0,
+                fillColor: FlutterFlowTheme.of(context).error,
+                icon: Icon(
+                  Icons.delete,
+                  color: FlutterFlowTheme.of(context).tertiary,
+                  size: 24.0,
+                ),
+                onPressed: () async {
+                  var confirmDialogResponse = await showDialog<bool>(
+                        context: context,
+                        builder: (alertDialogContext) {
+                          return AlertDialog(
+                            title: Text('Delete Image'),
+                            content: Text(
+                                'Are you sure you want to delete the uploaded image?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.pop(alertDialogContext, false),
+                                child: Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.pop(alertDialogContext, true),
+                                child: Text('Confirm'),
+                              ),
+                            ],
+                          );
+                        },
+                      ) ??
+                      false;
+                  if (confirmDialogResponse) {
+                    setState(() {
+                      _model.isDataUploading = false;
+                      _model.uploadedLocalFile =
+                          FFUploadedFile(bytes: Uint8List.fromList([]));
+                      _model.uploadedFileUrl = '';
+                    });
+                  }
+                },
               ),
-              onPressed: () {
-                print('IconButton pressed ...');
-              },
             ),
-          ),
+          if (_model.uploadedFileUrl == null || _model.uploadedFileUrl == '')
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 0.0),
+              child: FlutterFlowIconButton(
+                borderColor: Colors.transparent,
+                borderRadius: 8.0,
+                borderWidth: 1.0,
+                buttonSize: 44.0,
+                icon: Icon(
+                  Icons.image_outlined,
+                  color: FlutterFlowTheme.of(context).tertiary,
+                  size: 24.0,
+                ),
+                onPressed: () async {
+                  final selectedMedia = await selectMediaWithSourceBottomSheet(
+                    context: context,
+                    allowPhoto: true,
+                  );
+                  if (selectedMedia != null &&
+                      selectedMedia.every(
+                          (m) => validateFileFormat(m.storagePath, context))) {
+                    setState(() => _model.isDataUploading = true);
+                    var selectedUploadedFiles = <FFUploadedFile>[];
+
+                    var downloadUrls = <String>[];
+                    try {
+                      showUploadMessage(
+                        context,
+                        'Uploading file...',
+                        showLoading: true,
+                      );
+                      selectedUploadedFiles = selectedMedia
+                          .map((m) => FFUploadedFile(
+                                name: m.storagePath.split('/').last,
+                                bytes: m.bytes,
+                                height: m.dimensions?.height,
+                                width: m.dimensions?.width,
+                                blurHash: m.blurHash,
+                              ))
+                          .toList();
+
+                      downloadUrls = (await Future.wait(
+                        selectedMedia.map(
+                          (m) async => await uploadData(m.storagePath, m.bytes),
+                        ),
+                      ))
+                          .where((u) => u != null)
+                          .map((u) => u!)
+                          .toList();
+                    } finally {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      _model.isDataUploading = false;
+                    }
+                    if (selectedUploadedFiles.length == selectedMedia.length &&
+                        downloadUrls.length == selectedMedia.length) {
+                      setState(() {
+                        _model.uploadedLocalFile = selectedUploadedFiles.first;
+                        _model.uploadedFileUrl = downloadUrls.first;
+                      });
+                      showUploadMessage(context, 'Success!');
+                    } else {
+                      setState(() {});
+                      showUploadMessage(context, 'Failed to upload data');
+                      return;
+                    }
+                  }
+                },
+              ),
+            ),
           Expanded(
             child: Padding(
               padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
@@ -152,6 +257,10 @@ class _MessageBoxWidgetState extends State<MessageBoxWidget> {
                   ...createPostsRecordData(
                     postDescription: _model.postTextController.text,
                     postUsername: currentUserDisplayName,
+                    uid: currentUserUid,
+                    poster: currentUserReference,
+                    profilePicture: currentUserPhoto,
+                    attachedImage: _model.uploadedFileUrl,
                   ),
                   'time_posted': FieldValue.serverTimestamp(),
                 });

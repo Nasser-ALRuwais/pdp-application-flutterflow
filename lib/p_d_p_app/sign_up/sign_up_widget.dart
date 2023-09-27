@@ -1,5 +1,6 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -42,6 +43,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(_model.unfocusNode),
       child: Scaffold(
@@ -88,28 +91,45 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Align(
-                              alignment: AlignmentDirectional(0.00, 0.00),
-                              child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    10.0, 0.0, 0.0, 0.0),
-                                child: InkWell(
-                                  splashColor: Colors.transparent,
-                                  focusColor: Colors.transparent,
-                                  hoverColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  onTap: () async {
-                                    context.pushNamed('LoginOrSignup');
-                                  },
-                                  child: Icon(
-                                    Icons.keyboard_arrow_left,
-                                    color: FlutterFlowTheme.of(context)
-                                        .secondaryText,
-                                    size: 24.0,
+                            FlutterFlowIconButton(
+                              borderColor: Color(0x001A1531),
+                              borderRadius: 20.0,
+                              borderWidth: 1.0,
+                              buttonSize: 40.0,
+                              fillColor: Color(0x004B39EF),
+                              icon: Icon(
+                                Icons.keyboard_arrow_left,
+                                color:
+                                    FlutterFlowTheme.of(context).secondaryText,
+                                size: 24.0,
+                              ),
+                              onPressed: () async {
+                                context.pushNamed('LoginOrSignup');
+                              },
+                            ),
+                            if (false)
+                              Align(
+                                alignment: AlignmentDirectional(0.00, 0.00),
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      10.0, 0.0, 0.0, 0.0),
+                                  child: InkWell(
+                                    splashColor: Colors.transparent,
+                                    focusColor: Colors.transparent,
+                                    hoverColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    onTap: () async {
+                                      context.pushNamed('LoginOrSignup');
+                                    },
+                                    child: Icon(
+                                      Icons.keyboard_arrow_left,
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryText,
+                                      size: 24.0,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
                             Align(
                               alignment: AlignmentDirectional(0.00, 0.00),
                               child: Padding(
@@ -148,6 +168,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                               child: TextFormField(
                                 controller: _model.textController1,
                                 autofocus: true,
+                                textInputAction: TextInputAction.next,
                                 obscureText: false,
                                 decoration: InputDecoration(
                                   labelText: 'Full Name',
@@ -202,7 +223,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                             alignment: AlignmentDirectional(0.00, 0.00),
                             child: TextFormField(
                               controller: _model.emailTextController,
-                              autofocus: true,
+                              textInputAction: TextInputAction.next,
                               obscureText: false,
                               decoration: InputDecoration(
                                 labelText: 'Email',
@@ -250,7 +271,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                               ),
                               style: FlutterFlowTheme.of(context).bodyMedium,
                               textAlign: TextAlign.start,
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.emailAddress,
                               validator: _model.emailTextControllerValidator
                                   .asValidator(context),
                             ),
@@ -259,7 +280,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                             alignment: AlignmentDirectional(0.00, 0.00),
                             child: TextFormField(
                               controller: _model.passwordTextController,
-                              autofocus: true,
+                              textInputAction: TextInputAction.next,
                               obscureText: !_model.passwordVisibility1,
                               decoration: InputDecoration(
                                 labelText: 'Password',
@@ -333,7 +354,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                               child: TextFormField(
                                 controller:
                                     _model.confirmPasswordTextController,
-                                autofocus: true,
+                                textInputAction: TextInputAction.go,
                                 obscureText: !_model.passwordVisibility2,
                                 decoration: InputDecoration(
                                   labelText: 'Confirm Password',
@@ -458,26 +479,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                                   .doc(user.uid)
                                   .update(createUsersRecordData(
                                     displayName: _model.textController1.text,
+                                    attended: false,
                                   ));
-
-                              await authManager.sendEmailVerification();
-                              await showDialog(
-                                context: context,
-                                builder: (alertDialogContext) {
-                                  return AlertDialog(
-                                    title: Text('Account Created'),
-                                    content: Text(
-                                        'Please verify your account beofre you login. Check your email'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(alertDialogContext),
-                                        child: Text('Ok'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
 
                               context.pushNamedAuth(
                                 'Login',

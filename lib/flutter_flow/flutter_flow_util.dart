@@ -17,6 +17,7 @@ export 'keep_alive_wrapper.dart';
 export 'lat_lng.dart';
 export 'place.dart';
 export 'uploaded_file.dart';
+export '../app_state.dart';
 export 'flutter_flow_model.dart';
 export 'dart:math' show min, max;
 export 'dart:typed_data' show Uint8List;
@@ -291,4 +292,14 @@ extension ListDivideExt<T extends Widget> on Iterable<T> {
   List<Padding> paddingTopEach(double val) =>
       map((w) => Padding(padding: EdgeInsets.only(top: val), child: w))
           .toList();
+}
+
+extension StatefulWidgetExtensions on State<StatefulWidget> {
+  /// Check if the widget exist before safely setting state.
+  void safeSetState(VoidCallback fn) {
+    if (mounted) {
+      // ignore: invalid_use_of_protected_member
+      setState(fn);
+    }
+  }
 }
