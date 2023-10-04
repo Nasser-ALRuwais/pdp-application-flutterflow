@@ -2,13 +2,15 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/permissions_util.dart';
+import 'notification_dialog_widget.dart' show NotificationDialogWidget;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-class NotificationDialogModel extends FlutterFlowModel {
+class NotificationDialogModel
+    extends FlutterFlowModel<NotificationDialogWidget> {
   /// Initialization and disposal methods.
 
   void initState(BuildContext context) {}

@@ -24,6 +24,8 @@ class _LoginOrSignupWidgetState extends State<LoginOrSignupWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => LoginOrSignupModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
@@ -38,7 +40,9 @@ class _LoginOrSignupWidgetState extends State<LoginOrSignupWidget> {
     context.watch<FFAppState>();
 
     return GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(_model.unfocusNode),
+      onTap: () => _model.unfocusNode.canRequestFocus
+          ? FocusScope.of(context).requestFocus(_model.unfocusNode)
+          : FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: Color(0xFF351A33),

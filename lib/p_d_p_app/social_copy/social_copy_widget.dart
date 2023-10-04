@@ -5,7 +5,6 @@ import '/components/post/post_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:async';
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -13,25 +12,25 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'timeline_page_model.dart';
-export 'timeline_page_model.dart';
+import 'social_copy_model.dart';
+export 'social_copy_model.dart';
 
-class TimelinePageWidget extends StatefulWidget {
-  const TimelinePageWidget({Key? key}) : super(key: key);
+class SocialCopyWidget extends StatefulWidget {
+  const SocialCopyWidget({Key? key}) : super(key: key);
 
   @override
-  _TimelinePageWidgetState createState() => _TimelinePageWidgetState();
+  _SocialCopyWidgetState createState() => _SocialCopyWidgetState();
 }
 
-class _TimelinePageWidgetState extends State<TimelinePageWidget> {
-  late TimelinePageModel _model;
+class _SocialCopyWidgetState extends State<SocialCopyWidget> {
+  late SocialCopyModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
-    _model = createModel(context, () => TimelinePageModel());
+    _model = createModel(context, () => SocialCopyModel());
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
@@ -48,8 +47,9 @@ class _TimelinePageWidgetState extends State<TimelinePageWidget> {
             return Material(
               color: Colors.transparent,
               child: GestureDetector(
-                onTap: () =>
-                    FocusScope.of(context).requestFocus(_model.unfocusNode),
+                onTap: () => _model.unfocusNode.canRequestFocus
+                    ? FocusScope.of(context).requestFocus(_model.unfocusNode)
+                    : FocusScope.of(context).unfocus(),
                 child: AlertDialogWidget(),
               ),
             );
@@ -59,6 +59,8 @@ class _TimelinePageWidgetState extends State<TimelinePageWidget> {
         FFAppState().firstTimeSocial = true;
       }
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
@@ -74,7 +76,9 @@ class _TimelinePageWidgetState extends State<TimelinePageWidget> {
 
     return Builder(
       builder: (context) => GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(_model.unfocusNode),
+        onTap: () => _model.unfocusNode.canRequestFocus
+            ? FocusScope.of(context).requestFocus(_model.unfocusNode)
+            : FocusScope.of(context).unfocus(),
         child: Scaffold(
           key: scaffoldKey,
           backgroundColor: FlutterFlowTheme.of(context).primary,
@@ -208,15 +212,12 @@ class _TimelinePageWidgetState extends State<TimelinePageWidget> {
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(),
-                        child: FutureBuilder<List<PostsRecord>>(
-                          future: FFAppState().socialCache(
-                            requestFn: () => queryPostsRecordOnce(
+                        child: StreamBuilder<List<PostsRecord>>(
+                          stream: FFAppState().social2(
+                            requestFn: () => queryPostsRecord(
                               queryBuilder: (postsRecord) => postsRecord
                                   .orderBy('time_posted', descending: true),
-                            ).then((result) {
-                              _model.firestoreRequestCompleted = true;
-                              return result;
-                            }),
+                            ),
                           ),
                           builder: (context, snapshot) {
                             // Customize what your widget looks like when it's loading.
@@ -238,13 +239,7 @@ class _TimelinePageWidgetState extends State<TimelinePageWidget> {
                               color: Colors.black,
                               backgroundColor: Color(0xFFFCA442),
                               strokeWidth: 4.0,
-                              onRefresh: () async {
-                                setState(() {
-                                  FFAppState().clearSocialCacheCache();
-                                  _model.firestoreRequestCompleted = false;
-                                });
-                                await _model.waitForFirestoreRequestCompleted();
-                              },
+                              onRefresh: () async {},
                               child: SingleChildScrollView(
                                 physics: const AlwaysScrollableScrollPhysics(),
                                 child: Column(
@@ -300,7 +295,7 @@ class _TimelinePageWidgetState extends State<TimelinePageWidget> {
                                                   setState(() {}),
                                               child: PostWidget(
                                                 key: Key(
-                                                  'Keylpu_${columnPostsRecord.uid}',
+                                                  'Keytdb_${columnPostsRecord.uid}',
                                                 ),
                                                 username: containerUsersRecord
                                                     .displayName,

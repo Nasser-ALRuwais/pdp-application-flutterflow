@@ -4,22 +4,20 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/permissions_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'notification_dialog_model.dart';
-export 'notification_dialog_model.dart';
+import 'n_f_c_dialog_model.dart';
+export 'n_f_c_dialog_model.dart';
 
-class NotificationDialogWidget extends StatefulWidget {
-  const NotificationDialogWidget({Key? key}) : super(key: key);
+class NFCDialogWidget extends StatefulWidget {
+  const NFCDialogWidget({Key? key}) : super(key: key);
 
   @override
-  _NotificationDialogWidgetState createState() =>
-      _NotificationDialogWidgetState();
+  _NFCDialogWidgetState createState() => _NFCDialogWidgetState();
 }
 
-class _NotificationDialogWidgetState extends State<NotificationDialogWidget> {
-  late NotificationDialogModel _model;
+class _NFCDialogWidgetState extends State<NFCDialogWidget> {
+  late NFCDialogModel _model;
 
   @override
   void setState(VoidCallback callback) {
@@ -30,7 +28,7 @@ class _NotificationDialogWidgetState extends State<NotificationDialogWidget> {
   @override
   void initState() {
     super.initState();
-    _model = createModel(context, () => NotificationDialogModel());
+    _model = createModel(context, () => NFCDialogModel());
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
@@ -86,8 +84,8 @@ class _NotificationDialogWidgetState extends State<NotificationDialogWidget> {
                       child: Padding(
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 16.0),
-                        child: FaIcon(
-                          FontAwesomeIcons.solidBell,
+                        child: Icon(
+                          Icons.nfc,
                           color: FlutterFlowTheme.of(context).secondaryText,
                           size: 44.0,
                         ),
@@ -96,7 +94,7 @@ class _NotificationDialogWidgetState extends State<NotificationDialogWidget> {
                     Align(
                       alignment: AlignmentDirectional(0.00, 0.00),
                       child: Text(
-                        'Allow Notification',
+                        'NFC Access',
                         textAlign: TextAlign.center,
                         style: FlutterFlowTheme.of(context)
                             .titleMedium
@@ -112,7 +110,7 @@ class _NotificationDialogWidgetState extends State<NotificationDialogWidget> {
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
                         child: Text(
-                          'We will only notify you on who is the current speaker on-stage',
+                          'Please enable NFC in order to log your attendance',
                           style: FlutterFlowTheme.of(context).labelMedium,
                         ),
                       ),
@@ -126,34 +124,12 @@ class _NotificationDialogWidgetState extends State<NotificationDialogWidget> {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 12.0, 0.0),
-                      child: FFButtonWidget(
-                        onPressed: () async {
-                          Navigator.pop(context);
-                        },
-                        text: 'Don\'t Allow',
-                        options: FFButtonOptions(
-                          height: 40.0,
-                          padding: EdgeInsetsDirectional.fromSTEB(
-                              20.0, 0.0, 20.0, 0.0),
-                          iconPadding: EdgeInsetsDirectional.fromSTEB(
-                              0.0, 0.0, 0.0, 0.0),
-                          color:
-                              FlutterFlowTheme.of(context).secondaryBackground,
-                          textStyle: FlutterFlowTheme.of(context).bodyLarge,
-                          elevation: 0.0,
-                          borderRadius: BorderRadius.circular(40.0),
-                        ),
-                      ),
-                    ),
                     FFButtonWidget(
                       onPressed: () async {
                         await requestPermission(notificationsPermission);
                         Navigator.pop(context);
                       },
-                      text: 'Allow',
+                      text: 'Ok',
                       options: FFButtonOptions(
                         height: 40.0,
                         padding: EdgeInsetsDirectional.fromSTEB(

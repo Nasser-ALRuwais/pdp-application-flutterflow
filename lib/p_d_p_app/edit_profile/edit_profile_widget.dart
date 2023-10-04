@@ -34,6 +34,7 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
 
     _model.textController ??=
         TextEditingController(text: currentUserDisplayName);
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
@@ -49,7 +50,7 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
 
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: FlutterFlowTheme.of(context).primary,
+      backgroundColor: Color(0xFF351A33),
       body: SafeArea(
         top: true,
         child: Align(
@@ -101,7 +102,17 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                             size: 24.0,
                           ),
                           onPressed: () async {
-                            context.pushNamed('profile');
+                            context.pushNamed(
+                              'profile',
+                              extra: <String, dynamic>{
+                                kTransitionInfoKey: TransitionInfo(
+                                  hasTransition: true,
+                                  transitionType:
+                                      PageTransitionType.leftToRight,
+                                  duration: Duration(milliseconds: 20),
+                                ),
+                              },
+                            );
                           },
                         ),
                         if (false)
@@ -179,93 +190,137 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                             ),
                           ),
                         ),
-                        FFButtonWidget(
-                          onPressed: () async {
-                            final selectedMedia =
-                                await selectMediaWithSourceBottomSheet(
-                              context: context,
-                              allowPhoto: true,
-                            );
-                            if (selectedMedia != null &&
-                                selectedMedia.every((m) => validateFileFormat(
-                                    m.storagePath, context))) {
-                              setState(() => _model.isDataUploading = true);
-                              var selectedUploadedFiles = <FFUploadedFile>[];
-
-                              var downloadUrls = <String>[];
-                              try {
-                                showUploadMessage(
-                                  context,
-                                  'Uploading file...',
-                                  showLoading: true,
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            FFButtonWidget(
+                              onPressed: () async {
+                                final selectedMedia =
+                                    await selectMediaWithSourceBottomSheet(
+                                  context: context,
+                                  allowPhoto: true,
                                 );
-                                selectedUploadedFiles = selectedMedia
-                                    .map((m) => FFUploadedFile(
-                                          name: m.storagePath.split('/').last,
-                                          bytes: m.bytes,
-                                          height: m.dimensions?.height,
-                                          width: m.dimensions?.width,
-                                          blurHash: m.blurHash,
-                                        ))
-                                    .toList();
+                                if (selectedMedia != null &&
+                                    selectedMedia.every((m) =>
+                                        validateFileFormat(
+                                            m.storagePath, context))) {
+                                  setState(() => _model.isDataUploading = true);
+                                  var selectedUploadedFiles =
+                                      <FFUploadedFile>[];
 
-                                downloadUrls = (await Future.wait(
-                                  selectedMedia.map(
-                                    (m) async => await uploadData(
-                                        m.storagePath, m.bytes),
-                                  ),
-                                ))
-                                    .where((u) => u != null)
-                                    .map((u) => u!)
-                                    .toList();
-                              } finally {
-                                ScaffoldMessenger.of(context)
-                                    .hideCurrentSnackBar();
-                                _model.isDataUploading = false;
-                              }
-                              if (selectedUploadedFiles.length ==
-                                      selectedMedia.length &&
-                                  downloadUrls.length == selectedMedia.length) {
-                                setState(() {
-                                  _model.uploadedLocalFile =
-                                      selectedUploadedFiles.first;
-                                  _model.uploadedFileUrl = downloadUrls.first;
-                                });
-                                showUploadMessage(context, 'Success!');
-                              } else {
-                                setState(() {});
-                                showUploadMessage(
-                                    context, 'Failed to upload data');
-                                return;
-                              }
-                            }
+                                  var downloadUrls = <String>[];
+                                  try {
+                                    showUploadMessage(
+                                      context,
+                                      'Uploading file...',
+                                      showLoading: true,
+                                    );
+                                    selectedUploadedFiles = selectedMedia
+                                        .map((m) => FFUploadedFile(
+                                              name:
+                                                  m.storagePath.split('/').last,
+                                              bytes: m.bytes,
+                                              height: m.dimensions?.height,
+                                              width: m.dimensions?.width,
+                                              blurHash: m.blurHash,
+                                            ))
+                                        .toList();
 
-                            await currentUserReference!
-                                .update(createUsersRecordData(
-                              photoUrl: _model.uploadedFileUrl,
-                            ));
-                          },
-                          text: 'Upload Image',
-                          options: FFButtonOptions(
-                            height: 40.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
-                                24.0, 0.0, 24.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                0.0, 0.0, 0.0, 0.0),
-                            color: Color(0xFF453261),
-                            textStyle: FlutterFlowTheme.of(context)
-                                .titleSmall
-                                .override(
-                                  fontFamily: 'Readex Pro',
-                                  color: Colors.white,
+                                    downloadUrls = (await Future.wait(
+                                      selectedMedia.map(
+                                        (m) async => await uploadData(
+                                            m.storagePath, m.bytes),
+                                      ),
+                                    ))
+                                        .where((u) => u != null)
+                                        .map((u) => u!)
+                                        .toList();
+                                  } finally {
+                                    ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar();
+                                    _model.isDataUploading = false;
+                                  }
+                                  if (selectedUploadedFiles.length ==
+                                          selectedMedia.length &&
+                                      downloadUrls.length ==
+                                          selectedMedia.length) {
+                                    setState(() {
+                                      _model.uploadedLocalFile =
+                                          selectedUploadedFiles.first;
+                                      _model.uploadedFileUrl =
+                                          downloadUrls.first;
+                                    });
+                                    showUploadMessage(context, 'Success!');
+                                  } else {
+                                    setState(() {});
+                                    showUploadMessage(
+                                        context, 'Failed to upload data');
+                                    return;
+                                  }
+                                }
+
+                                await currentUserReference!
+                                    .update(createUsersRecordData(
+                                  photoUrl: _model.uploadedFileUrl,
+                                ));
+                              },
+                              text: 'Upload Image',
+                              options: FFButtonOptions(
+                                width: 155.0,
+                                height: 40.0,
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    24.0, 0.0, 24.0, 0.0),
+                                iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 0.0, 0.0, 0.0),
+                                color: Color(0xFF453261),
+                                textStyle: FlutterFlowTheme.of(context)
+                                    .titleSmall
+                                    .override(
+                                      fontFamily: 'Readex Pro',
+                                      color: Colors.white,
+                                    ),
+                                elevation: 0.0,
+                                borderSide: BorderSide(
+                                  color: Colors.transparent,
+                                  width: 1.0,
                                 ),
-                            elevation: 0.0,
-                            borderSide: BorderSide(
-                              color: Colors.transparent,
-                              width: 1.0,
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              showLoadingIndicator: false,
                             ),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
+                            FFButtonWidget(
+                              onPressed: () async {
+                                await currentUserReference!
+                                    .update(createUsersRecordData(
+                                  photoUrl:
+                                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjYmlp9JDeNMaFZzw9S3G1dVztGqF_2vq9nA&usqp=CAU',
+                                ));
+                              },
+                              text: 'Cancel',
+                              options: FFButtonOptions(
+                                width: 155.0,
+                                height: 40.0,
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    24.0, 0.0, 24.0, 0.0),
+                                iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 0.0, 0.0, 0.0),
+                                color: Color(0xFF707070),
+                                textStyle: FlutterFlowTheme.of(context)
+                                    .titleSmall
+                                    .override(
+                                      fontFamily: 'Readex Pro',
+                                      color: Colors.white,
+                                    ),
+                                elevation: 0.0,
+                                borderSide: BorderSide(
+                                  color: Colors.transparent,
+                                  width: 1.0,
+                                ),
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                          ],
                         ),
                         AuthUserStreamWidget(
                           builder: (context) => TextFormField(

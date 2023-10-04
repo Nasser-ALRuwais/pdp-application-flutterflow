@@ -1,11 +1,15 @@
 import '/auth/firebase_auth/auth_util.dart';
+import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'login_model.dart';
 export 'login_model.dart';
 
@@ -16,10 +20,27 @@ class LoginWidget extends StatefulWidget {
   _LoginWidgetState createState() => _LoginWidgetState();
 }
 
-class _LoginWidgetState extends State<LoginWidget> {
+class _LoginWidgetState extends State<LoginWidget>
+    with TickerProviderStateMixin {
   late LoginModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  final animationsMap = {
+    'buttonOnPageLoadAnimation': AnimationInfo(
+      trigger: AnimationTrigger.onPageLoad,
+      effects: [
+        VisibilityEffect(duration: 1.ms),
+        MoveEffect(
+          curve: Curves.easeInOut,
+          delay: 0.ms,
+          duration: 500.ms,
+          begin: Offset(0.0, 0.0),
+          end: Offset(0.0, 0.0),
+        ),
+      ],
+    ),
+  };
 
   @override
   void initState() {
@@ -28,6 +49,8 @@ class _LoginWidgetState extends State<LoginWidget> {
 
     _model.emailTextController ??= TextEditingController();
     _model.passwordTextController ??= TextEditingController();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
@@ -42,7 +65,9 @@ class _LoginWidgetState extends State<LoginWidget> {
     context.watch<FFAppState>();
 
     return GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(_model.unfocusNode),
+      onTap: () => _model.unfocusNode.canRequestFocus
+          ? FocusScope.of(context).requestFocus(_model.unfocusNode)
+          : FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: Color(0xFF351A33),
@@ -302,25 +327,18 @@ class _LoginWidgetState extends State<LoginWidget> {
                       alignment: AlignmentDirectional(0.00, 1.00),
                       child: FFButtonWidget(
                         onPressed: () async {
-                          await authManager.refreshUser();
-                          if (currentUserEmailVerified) {
-                            context.pushNamedAuth('HomePage', context.mounted);
+                          GoRouter.of(context).prepareAuthEvent();
 
+                          final user = await authManager.signInWithEmail(
+                            context,
+                            _model.emailTextController.text,
+                            _model.passwordTextController.text,
+                          );
+                          if (user == null) {
                             return;
-                          } else {
-                            GoRouter.of(context).prepareAuthEvent();
-
-                            final user = await authManager.signInWithEmail(
-                              context,
-                              _model.emailTextController.text,
-                              _model.passwordTextController.text,
-                            );
-                            if (user == null) {
-                              return;
-                            }
-
-                            context.pushNamedAuth('HomePage', context.mounted);
                           }
+
+                          context.goNamedAuth('HomePage', context.mounted);
                         },
                         text: 'Log in',
                         options: FFButtonOptions(
@@ -343,7 +361,8 @@ class _LoginWidgetState extends State<LoginWidget> {
                           ),
                           borderRadius: BorderRadius.circular(13.0),
                         ),
-                      ),
+                      ).animateOnPageLoad(
+                          animationsMap['buttonOnPageLoadAnimation']!),
                     ),
                   ),
                 ),
@@ -423,20 +442,18 @@ class _LoginWidgetState extends State<LoginWidget> {
                               if (/* NOT RECOMMENDED */ _model
                                       .emailTextController.text ==
                                   'true') {
-                                if (_model.emailTextController.text.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Email required!',
-                                      ),
+                                context.goNamed(
+                                  'PasswordChange',
+                                  extra: <String, dynamic>{
+                                    kTransitionInfoKey: TransitionInfo(
+                                      hasTransition: true,
+                                      transitionType:
+                                          PageTransitionType.bottomToTop,
+                                      duration: Duration(milliseconds: 20),
                                     ),
-                                  );
-                                  return;
-                                }
-                                await authManager.resetPassword(
-                                  email: _model.emailTextController.text,
-                                  context: context,
+                                  },
                                 );
+
                                 await showDialog(
                                   context: context,
                                   builder: (alertDialogContext) {
@@ -507,13 +524,41 @@ class _LoginWidgetState extends State<LoginWidget> {
                               }
                             },
                             child: Text(
-                              'Forgot Password?',
+                              'Facing an issue? please contact us',
+                              textAlign: TextAlign.center,
                               style: FlutterFlowTheme.of(context)
                                   .headlineMedium
                                   .override(
                                     fontFamily: 'Spline Sans',
                                     color:
                                         FlutterFlowTheme.of(context).tertiary,
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w300,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                            ),
+                          ),
+                        ),
+                        Align(
+                          alignment: AlignmentDirectional(0.00, 0.00),
+                          child: InkWell(
+                            splashColor: Colors.transparent,
+                            focusColor: Colors.transparent,
+                            hoverColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onTap: () async {
+                              await launchUrl(Uri(
+                                scheme: 'mailto',
+                                path: 'PdpConference1@gmail.com',
+                              ));
+                            },
+                            child: Text(
+                              ' Here',
+                              style: FlutterFlowTheme.of(context)
+                                  .headlineMedium
+                                  .override(
+                                    fontFamily: 'Spline Sans',
+                                    color: Color(0xFFFCA340),
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.w300,
                                     fontStyle: FontStyle.italic,

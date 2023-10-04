@@ -38,6 +38,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
     });
 
     _model.textController2 ??= TextEditingController(text: currentUserEmail);
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
@@ -55,8 +56,10 @@ class _ProfileWidgetState extends State<ProfileWidget> {
       future:
           (_model.firestoreRequestCompleter ??= Completer<List<UsersRecord>>()
                 ..complete(queryUsersRecordOnce(
-                  queryBuilder: (usersRecord) =>
-                      usersRecord.where('uid', isEqualTo: currentUserUid),
+                  queryBuilder: (usersRecord) => usersRecord.where(
+                    'uid',
+                    isEqualTo: currentUserUid,
+                  ),
                   singleRecord: true,
                 )))
               .future,
@@ -64,7 +67,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
         // Customize what your widget looks like when it's loading.
         if (!snapshot.hasData) {
           return Scaffold(
-            backgroundColor: FlutterFlowTheme.of(context).primary,
+            backgroundColor: Color(0xFF351A33),
             body: Center(
               child: SizedBox(
                 width: 250.0,
@@ -87,7 +90,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
             : null;
         return Scaffold(
           key: scaffoldKey,
-          backgroundColor: FlutterFlowTheme.of(context).primary,
+          backgroundColor: Color(0xFF351A33),
           body: SafeArea(
             top: true,
             child: Align(
@@ -395,7 +398,9 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                                 hasTransition: true,
                                                 transitionType:
                                                     PageTransitionType
-                                                        .topToBottom,
+                                                        .rightToLeft,
+                                                duration:
+                                                    Duration(milliseconds: 20),
                                               ),
                                             },
                                           );
@@ -465,13 +470,71 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                           size: 24.0,
                                         ),
                                         onPressed: () async {
-                                          context.pushNamed('PasswordChange');
+                                          context.pushNamed(
+                                            'PasswordChange',
+                                            extra: <String, dynamic>{
+                                              kTransitionInfoKey:
+                                                  TransitionInfo(
+                                                hasTransition: true,
+                                                transitionType:
+                                                    PageTransitionType
+                                                        .rightToLeft,
+                                                duration:
+                                                    Duration(milliseconds: 20),
+                                              ),
+                                            },
+                                          );
                                         },
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
+                            ),
+                          ),
+                          FFButtonWidget(
+                            onPressed: () async {
+                              FFAppState().clearDescriptionCacheCache();
+                              FFAppState().clearSocialCacheCache();
+                              FFAppState().clearPostCacheCache();
+                              await showDialog(
+                                context: context,
+                                builder: (alertDialogContext) {
+                                  return AlertDialog(
+                                    title: Text('Cache Cleared'),
+                                    content:
+                                        Text('Cache was successfully cleared'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(alertDialogContext),
+                                        child: Text('Ok'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            text: 'Clear Cache',
+                            options: FFButtonOptions(
+                              height: 40.0,
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  24.0, 0.0, 24.0, 0.0),
+                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                  0.0, 0.0, 0.0, 0.0),
+                              color: FlutterFlowTheme.of(context).primary,
+                              textStyle: FlutterFlowTheme.of(context)
+                                  .titleSmall
+                                  .override(
+                                    fontFamily: 'Readex Pro',
+                                    color: Colors.white,
+                                  ),
+                              elevation: 10.0,
+                              borderSide: BorderSide(
+                                color: Colors.transparent,
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(8.0),
                             ),
                           ),
                         ]

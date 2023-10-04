@@ -110,6 +110,52 @@ class FFAppState extends ChangeNotifier {
   void clearDescriptionCacheCache() => _descriptionCacheManager.clear();
   void clearDescriptionCacheCacheKey(String? uniqueKey) =>
       _descriptionCacheManager.clearRequest(uniqueKey);
+
+  final _conferenceDateCacheManager =
+      FutureRequestManager<List<ConferenceInfoRecord>>();
+  Future<List<ConferenceInfoRecord>> conferenceDateCache({
+    String? uniqueQueryKey,
+    bool? overrideCache,
+    required Future<List<ConferenceInfoRecord>> Function() requestFn,
+  }) =>
+      _conferenceDateCacheManager.performRequest(
+        uniqueQueryKey: uniqueQueryKey,
+        overrideCache: overrideCache,
+        requestFn: requestFn,
+      );
+  void clearConferenceDateCacheCache() => _conferenceDateCacheManager.clear();
+  void clearConferenceDateCacheCacheKey(String? uniqueKey) =>
+      _conferenceDateCacheManager.clearRequest(uniqueKey);
+
+  final _agendaManager = StreamRequestManager<List<AgendaRecord>>();
+  Stream<List<AgendaRecord>> agenda({
+    String? uniqueQueryKey,
+    bool? overrideCache,
+    required Stream<List<AgendaRecord>> Function() requestFn,
+  }) =>
+      _agendaManager.performRequest(
+        uniqueQueryKey: uniqueQueryKey,
+        overrideCache: overrideCache,
+        requestFn: requestFn,
+      );
+  void clearAgendaCache() => _agendaManager.clear();
+  void clearAgendaCacheKey(String? uniqueKey) =>
+      _agendaManager.clearRequest(uniqueKey);
+
+  final _social2Manager = StreamRequestManager<List<PostsRecord>>();
+  Stream<List<PostsRecord>> social2({
+    String? uniqueQueryKey,
+    bool? overrideCache,
+    required Stream<List<PostsRecord>> Function() requestFn,
+  }) =>
+      _social2Manager.performRequest(
+        uniqueQueryKey: uniqueQueryKey,
+        overrideCache: overrideCache,
+        requestFn: requestFn,
+      );
+  void clearSocial2Cache() => _social2Manager.clear();
+  void clearSocial2CacheKey(String? uniqueKey) =>
+      _social2Manager.clearRequest(uniqueKey);
 }
 
 LatLng? _latLngFromString(String? val) {

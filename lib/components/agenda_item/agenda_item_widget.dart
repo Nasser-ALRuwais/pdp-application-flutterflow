@@ -39,6 +39,8 @@ class _AgendaItemWidgetState extends State<AgendaItemWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => AgendaItemModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
@@ -56,82 +58,73 @@ class _AgendaItemWidgetState extends State<AgendaItemWidget> {
       padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 8.0),
       child: Container(
         width: double.infinity,
-        height: 85.0,
         decoration: BoxDecoration(
           color: FlutterFlowTheme.of(context).secondaryBackground,
           borderRadius: BorderRadius.circular(16.0),
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 0.0, 0.0),
-                  child: FaIcon(
-                    FontAwesomeIcons.clock,
-                    color: FlutterFlowTheme.of(context).primary,
-                    size: 24.0,
-                  ),
-                ),
-                Flexible(
-                  child: Padding(
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(0.0, 7.0, 4.0, 0.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Padding(
                     padding:
                         EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 0.0, 0.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Align(
-                          alignment: AlignmentDirectional(-1.00, 0.00),
-                          child: Text(
-                            widget.topic!,
-                            style: FlutterFlowTheme.of(context).bodyMedium,
+                    child: FaIcon(
+                      FontAwesomeIcons.clock,
+                      color: FlutterFlowTheme.of(context).primary,
+                      size: 24.0,
+                    ),
+                  ),
+                  Flexible(
+                    child: Padding(
+                      padding:
+                          EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 0.0, 0.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Align(
+                            alignment: AlignmentDirectional(-1.00, 0.00),
+                            child: Text(
+                              widget.topic!,
+                              style: FlutterFlowTheme.of(context).bodyMedium,
+                            ),
                           ),
-                        ),
-                        Text(
-                          dateTimeFormat('relative', widget.presentationTime),
-                          style: FlutterFlowTheme.of(context)
-                              .bodyMedium
-                              .override(
-                                fontFamily: 'Readex Pro',
-                                color:
-                                    FlutterFlowTheme.of(context).secondaryText,
-                              ),
-                        ),
-                        Text(
-                          functions
-                              .getProgressBarForTimeInMinutes(
-                                  getCurrentTimestamp.microsecondsSinceEpoch,
-                                  widget
-                                      .presentationTime!.microsecondsSinceEpoch)
-                              .toString(),
-                          style:
-                              FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Readex Pro',
-                                    fontSize: 6.0,
-                                  ),
-                        ),
-                      ],
+                          Text(
+                            dateTimeFormat('relative', widget.presentationTime),
+                            style: FlutterFlowTheme.of(context)
+                                .bodyMedium
+                                .override(
+                                  fontFamily: 'Readex Pro',
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryText,
+                                ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Align(
-                  alignment: AlignmentDirectional(0.00, 0.00),
-                  child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 5.0, 0.0),
-                    child: Text(
-                      widget.speaker!,
-                      style: FlutterFlowTheme.of(context).bodyMedium,
+                  Align(
+                    alignment: AlignmentDirectional(0.00, 0.00),
+                    child: Padding(
+                      padding:
+                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 5.0, 0.0),
+                      child: Text(
+                        widget.speaker!,
+                        style: FlutterFlowTheme.of(context).bodyMedium,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 10.0, 0.0),
+              padding: EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 10.0, 10.0),
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -144,6 +137,7 @@ class _AgendaItemWidgetState extends State<AgendaItemWidget> {
                       widget.presentationTime!.microsecondsSinceEpoch),
                   lineHeight: 7.0,
                   animation: true,
+                  animateFromLastPercent: true,
                   progressColor: Color(0xFF74279E),
                   backgroundColor: Color(0xFFEAECF0),
                   barRadius: Radius.circular(30.0),

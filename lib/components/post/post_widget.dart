@@ -68,6 +68,8 @@ class _PostWidgetState extends State<PostWidget> {
         }
       }
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override

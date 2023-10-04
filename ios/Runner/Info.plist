@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>PDP-Conference-v1</string>
+	<string>PDP Conference 2023</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -54,11 +54,13 @@
 	<true/>
 
 	<key>NSCameraUsageDescription</key>
-    <string>In order to take a picture or video, this app requires permission to access the camera.</string>
+    <string>Enable access to Camera</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-    <string>In order to upload data, this app requires permission to access the photo library.</string>
+    <string>Enable access to Gallery</string>
 	<key>PermissionGroupNotification</key>
     <string>Enable notification to be notified who is the current speaker</string>
+	<key>NFCReaderUsageDescription</key>
+    <string>Enable NFC</string>
 
 
 	<key>UILaunchStoryboardName</key>

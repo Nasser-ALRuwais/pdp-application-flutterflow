@@ -32,6 +32,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
     _model.emailTextController ??= TextEditingController();
     _model.passwordTextController ??= TextEditingController();
     _model.confirmPasswordTextController ??= TextEditingController();
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
@@ -46,10 +47,12 @@ class _SignUpWidgetState extends State<SignUpWidget> {
     context.watch<FFAppState>();
 
     return GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(_model.unfocusNode),
+      onTap: () => _model.unfocusNode.canRequestFocus
+          ? FocusScope.of(context).requestFocus(_model.unfocusNode)
+          : FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: FlutterFlowTheme.of(context).primary,
+        backgroundColor: Color(0xFF351A33),
         body: SafeArea(
           top: true,
           child: Align(

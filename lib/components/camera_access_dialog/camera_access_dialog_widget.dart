@@ -4,22 +4,21 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/permissions_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'notification_dialog_model.dart';
-export 'notification_dialog_model.dart';
+import 'camera_access_dialog_model.dart';
+export 'camera_access_dialog_model.dart';
 
-class NotificationDialogWidget extends StatefulWidget {
-  const NotificationDialogWidget({Key? key}) : super(key: key);
+class CameraAccessDialogWidget extends StatefulWidget {
+  const CameraAccessDialogWidget({Key? key}) : super(key: key);
 
   @override
-  _NotificationDialogWidgetState createState() =>
-      _NotificationDialogWidgetState();
+  _CameraAccessDialogWidgetState createState() =>
+      _CameraAccessDialogWidgetState();
 }
 
-class _NotificationDialogWidgetState extends State<NotificationDialogWidget> {
-  late NotificationDialogModel _model;
+class _CameraAccessDialogWidgetState extends State<CameraAccessDialogWidget> {
+  late CameraAccessDialogModel _model;
 
   @override
   void setState(VoidCallback callback) {
@@ -30,7 +29,7 @@ class _NotificationDialogWidgetState extends State<NotificationDialogWidget> {
   @override
   void initState() {
     super.initState();
-    _model = createModel(context, () => NotificationDialogModel());
+    _model = createModel(context, () => CameraAccessDialogModel());
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
@@ -86,8 +85,8 @@ class _NotificationDialogWidgetState extends State<NotificationDialogWidget> {
                       child: Padding(
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 16.0),
-                        child: FaIcon(
-                          FontAwesomeIcons.solidBell,
+                        child: Icon(
+                          Icons.image,
                           color: FlutterFlowTheme.of(context).secondaryText,
                           size: 44.0,
                         ),
@@ -96,7 +95,7 @@ class _NotificationDialogWidgetState extends State<NotificationDialogWidget> {
                     Align(
                       alignment: AlignmentDirectional(0.00, 0.00),
                       child: Text(
-                        'Allow Notification',
+                        'Camera Access',
                         textAlign: TextAlign.center,
                         style: FlutterFlowTheme.of(context)
                             .titleMedium
@@ -112,7 +111,7 @@ class _NotificationDialogWidgetState extends State<NotificationDialogWidget> {
                         padding:
                             EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 0.0),
                         child: Text(
-                          'We will only notify you on who is the current speaker on-stage',
+                          'Allow access to camera to uplode pictures',
                           style: FlutterFlowTheme.of(context).labelMedium,
                         ),
                       ),
@@ -150,7 +149,7 @@ class _NotificationDialogWidgetState extends State<NotificationDialogWidget> {
                     ),
                     FFButtonWidget(
                       onPressed: () async {
-                        await requestPermission(notificationsPermission);
+                        await requestPermission(cameraPermission);
                         Navigator.pop(context);
                       },
                       text: 'Allow',

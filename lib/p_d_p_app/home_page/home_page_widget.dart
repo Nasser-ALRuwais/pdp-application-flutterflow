@@ -6,6 +6,7 @@ import '/flutter_flow/flutter_flow_button_tabbar.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/custom_code/actions/index.dart' as actions;
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
@@ -44,31 +45,46 @@ class _HomePageWidgetState extends State<HomePageWidget>
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       if (FFAppState().firstTime == false) {
-        await showAlignedDialog(
-          context: context,
-          isGlobal: true,
-          avoidOverflow: false,
-          targetAnchor: AlignmentDirectional(0.0, 0.0)
-              .resolve(Directionality.of(context)),
-          followerAnchor: AlignmentDirectional(0.0, 0.0)
-              .resolve(Directionality.of(context)),
-          builder: (dialogContext) {
-            return Material(
-              color: Colors.transparent,
-              child: GestureDetector(
-                onTap: () =>
-                    FocusScope.of(context).requestFocus(_model.unfocusNode),
-                child: NotificationDialogWidget(),
-              ),
-            );
-          },
-        ).then((value) => setState(() {}));
-
-        FFAppState().firstTime = true;
-      } else {
-        setState(() {
+        if (isWeb) {
           FFAppState().firstTime = true;
-        });
+          return;
+        } else {
+          await showAlignedDialog(
+            context: context,
+            isGlobal: true,
+            avoidOverflow: false,
+            targetAnchor: AlignmentDirectional(0.0, 0.0)
+                .resolve(Directionality.of(context)),
+            followerAnchor: AlignmentDirectional(0.0, 0.0)
+                .resolve(Directionality.of(context)),
+            builder: (dialogContext) {
+              return Material(
+                color: Colors.transparent,
+                child: GestureDetector(
+                  onTap: () => _model.unfocusNode.canRequestFocus
+                      ? FocusScope.of(context).requestFocus(_model.unfocusNode)
+                      : FocusScope.of(context).unfocus(),
+                  child: NotificationDialogWidget(),
+                ),
+              );
+            },
+          ).then((value) => setState(() {}));
+
+          FFAppState().firstTime = true;
+          return;
+        }
+      } else {
+        if (isWeb) {
+          setState(() {
+            FFAppState().firstTime = true;
+          });
+          return;
+        } else {
+          setState(() {
+            FFAppState().firstTime = true;
+          });
+          return;
+        }
       }
     });
 
@@ -77,6 +93,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
       length: 2,
       initialIndex: 0,
     )..addListener(() => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
@@ -92,7 +109,9 @@ class _HomePageWidgetState extends State<HomePageWidget>
 
     return Builder(
       builder: (context) => GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(_model.unfocusNode),
+        onTap: () => _model.unfocusNode.canRequestFocus
+            ? FocusScope.of(context).requestFocus(_model.unfocusNode)
+            : FocusScope.of(context).unfocus(),
         child: Scaffold(
           key: scaffoldKey,
           backgroundColor: FlutterFlowTheme.of(context).primary,
@@ -137,13 +156,32 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                   mainAxisSize: MainAxisSize.max,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      child: Image.asset(
-                                        'assets/images/PDP_Conference_Brand_Image_(1)new.png',
-                                        width: 70.0,
-                                        height: 61.0,
-                                        fit: BoxFit.cover,
+                                    InkWell(
+                                      splashColor: Colors.transparent,
+                                      focusColor: Colors.transparent,
+                                      hoverColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      onLongPress: () async {
+                                        context.pushNamed(
+                                          'Login',
+                                          extra: <String, dynamic>{
+                                            kTransitionInfoKey: TransitionInfo(
+                                              hasTransition: true,
+                                              transitionType: PageTransitionType
+                                                  .topToBottom,
+                                            ),
+                                          },
+                                        );
+                                      },
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        child: Image.asset(
+                                          'assets/images/PDP_Conference_Brand_Image_(1)new.png',
+                                          width: 70.0,
+                                          height: 61.0,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
                                     Padding(
@@ -190,10 +228,157 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                           borderRadius:
                                               BorderRadius.circular(6.0),
                                         ),
-                                        child: Icon(
-                                          Icons.nfc,
-                                          color: Color(0xFF3276E6),
-                                          size: 25.0,
+                                        child: InkWell(
+                                          splashColor: Colors.transparent,
+                                          focusColor: Colors.transparent,
+                                          hoverColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          onTap: () async {
+                                            if (isAndroid) {
+                                              await showDialog(
+                                                context: context,
+                                                builder: (alertDialogContext) {
+                                                  return AlertDialog(
+                                                    title: Text('NFC Scan'),
+                                                    content: Text(
+                                                        'Please enable NFC on your phone and Scan the card with the center of your phone'),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                alertDialogContext),
+                                                        child: Text('Ok'),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                              await actions.nfcReader();
+                                              await Future.delayed(
+                                                  const Duration(
+                                                      milliseconds: 20000));
+                                              if (valueOrDefault<bool>(
+                                                  currentUserDocument?.attended,
+                                                  false)) {
+                                                await showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (alertDialogContext) {
+                                                    return AlertDialog(
+                                                      title: Text(
+                                                          'NFC  Completed'),
+                                                      content: Text(
+                                                          'Your Attendance is loged'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  alertDialogContext),
+                                                          child: Text('Ok'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                                return;
+                                              } else {
+                                                await showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (alertDialogContext) {
+                                                    return AlertDialog(
+                                                      title: Text('NFC Fail'),
+                                                      content: Text(
+                                                          'Please scan the card again'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  alertDialogContext),
+                                                          child: Text('Ok'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                                return;
+                                              }
+                                            } else {
+                                              await showDialog(
+                                                context: context,
+                                                builder: (alertDialogContext) {
+                                                  return AlertDialog(
+                                                    title: Text('NFC Scan'),
+                                                    content: Text(
+                                                        'Please scan the card with the top of your phone'),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                alertDialogContext),
+                                                        child: Text('Ok'),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                              await actions.nfcReader();
+                                              await Future.delayed(
+                                                  const Duration(
+                                                      milliseconds: 20000));
+                                              if (valueOrDefault<bool>(
+                                                  currentUserDocument?.attended,
+                                                  false)) {
+                                                await showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (alertDialogContext) {
+                                                    return AlertDialog(
+                                                      title: Text(
+                                                          'NFC  Completed'),
+                                                      content: Text(
+                                                          'Your Attendance is loged'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  alertDialogContext),
+                                                          child: Text('Ok'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                                return;
+                                              } else {
+                                                await showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (alertDialogContext) {
+                                                    return AlertDialog(
+                                                      title: Text('NFC Fail'),
+                                                      content: Text(
+                                                          'Please scan the card again'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  alertDialogContext),
+                                                          child: Text('Ok'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                                return;
+                                              }
+                                            }
+                                          },
+                                          child: Icon(
+                                            Icons.nfc,
+                                            color: Color(0xFF3276E6),
+                                            size: 25.0,
+                                          ),
                                         ),
                                       ),
                                       Container(
@@ -211,7 +396,20 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                           hoverColor: Colors.transparent,
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
-                                            context.pushNamed('profile');
+                                            context.pushNamed(
+                                              'profile',
+                                              extra: <String, dynamic>{
+                                                kTransitionInfoKey:
+                                                    TransitionInfo(
+                                                  hasTransition: true,
+                                                  transitionType:
+                                                      PageTransitionType
+                                                          .rightToLeft,
+                                                  duration: Duration(
+                                                      milliseconds: 20),
+                                                ),
+                                              },
+                                            );
                                           },
                                           child: Icon(
                                             Icons.perm_identity,
@@ -324,9 +522,12 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                             ),
                                             child: FutureBuilder<
                                                 List<ConferenceInfoRecord>>(
-                                              future:
-                                                  queryConferenceInfoRecordOnce(
-                                                singleRecord: true,
+                                              future: FFAppState()
+                                                  .conferenceDateCache(
+                                                requestFn: () =>
+                                                    queryConferenceInfoRecordOnce(
+                                                  singleRecord: true,
+                                                ),
                                               ),
                                               builder: (context, snapshot) {
                                                 // Customize what your widget looks like when it's loading.
@@ -462,6 +663,8 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                   .microsecondsSinceEpoch),
                                                           lineHeight: 7.0,
                                                           animation: true,
+                                                          animateFromLastPercent:
+                                                              true,
                                                           progressColor:
                                                               Color(0xFF74279E),
                                                           backgroundColor:
@@ -560,17 +763,16 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                           child: Text(
                                                             containerConferenceInfoRecord!
                                                                 .description,
+                                                            textAlign: TextAlign
+                                                                .center,
                                                             style: FlutterFlowTheme
                                                                     .of(context)
-                                                                .displaySmall
+                                                                .bodyMedium
                                                                 .override(
                                                                   fontFamily:
-                                                                      'Outfit',
+                                                                      'Poppins',
                                                                   fontSize:
-                                                                      26.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
+                                                                      20.0,
                                                                 ),
                                                           ),
                                                         ),
@@ -592,9 +794,11 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                   KeepAliveWidgetWrapper(
                                     builder: (context) =>
                                         StreamBuilder<List<AgendaRecord>>(
-                                      stream: queryAgendaRecord(
-                                        queryBuilder: (agendaRecord) =>
-                                            agendaRecord.orderBy('time'),
+                                      stream: FFAppState().agenda(
+                                        requestFn: () => queryAgendaRecord(
+                                          queryBuilder: (agendaRecord) =>
+                                              agendaRecord.orderBy('time'),
+                                        ),
                                       ),
                                       builder: (context, snapshot) {
                                         // Customize what your widget looks like when it's loading.

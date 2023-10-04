@@ -35,6 +35,7 @@ class _MessageBoxWidgetState extends State<MessageBoxWidget> {
     _model = createModel(context, () => MessageBoxModel());
 
     _model.postTextController ??= TextEditingController();
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
@@ -262,7 +263,11 @@ class _MessageBoxWidgetState extends State<MessageBoxWidget> {
                     profilePicture: currentUserPhoto,
                     attachedImage: _model.uploadedFileUrl,
                   ),
-                  'time_posted': FieldValue.serverTimestamp(),
+                  ...mapToFirestore(
+                    {
+                      'time_posted': FieldValue.serverTimestamp(),
+                    },
+                  ),
                 });
                 setState(() {
                   _model.postTextController?.clear();
